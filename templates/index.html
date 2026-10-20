@@ -35,6 +35,10 @@
 
               <form method="post" action="{{ url_for('index') }}" novalidate>
                 <div class="form-fields">
+                  <div class="field full-width">
+                    <label for="name">姓名 <span>NAME</span></label>
+                    <input id="name" name="name" type="text" autocomplete="name" maxlength="100" placeholder="例如 王小明" value="{{ name_input }}">
+                  </div>
                   <div class="field">
                     <label for="height">身高 <span>HEIGHT</span></label>
                     <div class="input-wrap">
@@ -62,10 +66,11 @@
               <section class="result-panel {{ result.tone }}" aria-labelledby="result-title" aria-live="polite">
                 <span class="panel-kicker">YOUR RESULT / 計算結果</span>
                 <div class="result-main">
-                  <span class="result-number">{{ result.bmi }}</span>
+                  <span class="result-number{% if result.overweight %} overweight{% endif %}">{{ result.bmi }}</span>
                   <span class="result-unit">BMI</span>
                 </div>
                 <div class="result-divider"></div>
+                {% if result.name %}<span class="result-name">姓名：{{ result.name }}</span>{% endif %}
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
                 <h2 id="result-title">給你的健康建議</h2>
                 <p>{{ result.advice }}</p>
