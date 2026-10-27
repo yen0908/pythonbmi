@@ -1,6 +1,6 @@
 import unittest
 
-from app import app, bmi_guidance
+from app import app, bmi_guidance, military_guidance
 
 
 class BmiAppTests(unittest.TestCase):
@@ -34,6 +34,20 @@ class BmiAppTests(unittest.TestCase):
         self.assertIn('class="result-number"', page)
         self.assertNotIn('class="result-number overweight"', page)
         self.assertIn("肥胖", page)
+
+    def test_military_guidance_uses_official_height_and_bmi_ranges(self):
+        self.assertEqual(military_guidance(170.9, 65.28)["category"], "常備役體位")
+        self.assertEqual(military_guidance(170, 95)["category"], "替代役體位")
+        self.assertEqual(military_guidance(170, 110)["category"], "免役體位")
+        self.assertEqual(military_guidance(156, 50)["category"], "替代役體位")
+        self.assertEqual(military_guidance(154, 50)["category"], "免役體位")
+
+    def test_result_displays_military_guidance(self):
+        response = self.client.post("/", data={"height": "170", "weight": "65"})
+        page = response.get_data(as_text=True)
+        self.assertIn("兵役參考", page)
+        self.assertIn("常備役體位", page)
+        self.assertIn("查看官方資料", page)
 
     def test_taiwan_adult_thresholds(self):
         for bmi, category in [
