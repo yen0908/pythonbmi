@@ -74,6 +74,13 @@
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
                 <h2 id="result-title">給你的健康建議</h2>
                 <p>{{ result.advice }}</p>
+                <div class="military-result">
+                  <span class="panel-kicker">MILITARY REFERENCE / 兵役參考</span>
+                  <strong>{{ result.military.category }}</strong>
+                  <span>測量值：身高 {{ result.military.height }} cm、體重 {{ result.military.weight }} kg、BMI {{ result.military.bmi }}</span>
+                  <p>{{ result.military.reason }}</p>
+                  <small>僅依身高與 BMI 試算，最終體位以徵兵檢查及主管機關判定為準。</small>
+                </div>
                 <span class="result-decoration" aria-hidden="true">✳</span>
               </section>
             {% else %}
@@ -102,6 +109,7 @@
           </div>
         </section>
         <p class="disclaimer">此結果僅供成人參考，無法反映肌肉量等個別差異，亦不適用於兒童、青少年或孕婦；若有健康疑慮，請諮詢醫療專業人員。</p>
+        <p class="disclaimer">兵役參考依內政部役政司身高體重體位區分標準試算；實際體位仍以徵兵檢查結果為準。<a href="https://dca.moi.gov.tw/PhysicalStatus/AP/CalculatorDetail.aspx?p=1" rel="noopener noreferrer">查看官方資料</a></p>
       </main>
       <footer>© 好好生活 <span>TAKE CARE, EVERY DAY.</span></footer>
     </div>
