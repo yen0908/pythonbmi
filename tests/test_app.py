@@ -1,6 +1,8 @@
 import unittest
 
-from app import app, bmi_guidance, military_guidance
+from app import app
+from domain.bmi import bmi_guidance
+from domain.military import military_guidance
 
 
 class BmiAppTests(unittest.TestCase):

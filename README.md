@@ -23,6 +23,16 @@ BMI = 體重（公斤）÷ 身高（公尺）²。分類採臺灣成人體位參
 
 這只是成人體位參考，不能取代專業醫療評估，也不適用於兒童、青少年或孕婦。
 
+## 程式結構
+
+Flask route 與計算規則分開管理：
+
+- `app.py`：處理 HTTP request、輸入驗證、錯誤訊息與 template rendering。
+- `domain/bmi.py`：提供 BMI 計算與成人 BMI 分類規則。
+- `domain/military.py`：提供身高體重兵役體位參考規則。
+- `tests/test_app.py`：測試網頁請求與畫面結果。
+- `tests/test_domain.py`：測試獨立的 BMI 與兵役商業規則。
+
 執行測試：`python -m unittest discover -s tests`
 
 ## 部署到 Azure Web App
