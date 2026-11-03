@@ -2,7 +2,7 @@ name: Deploy BMI to Azure
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
     paths:
       - app.py
       - serve.py
@@ -84,6 +84,24 @@ jobs:
           slot-name: ${{ env.AZURE_SLOT_NAME }}
           package: dist
 
+      - name: Smoke test Azure staging slot
+        shell: pwsh
+        run: |
+          $url = "https://$env:AZURE_WEBAPP_NAME-$env:AZURE_SLOT_NAME.azurewebsites.net/"
+          $success = $false
+          1..6 | ForEach-Object {
+            try {
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+              if ($response.StatusCode -eq 200) {
+                $success = $true
+                return
+              }
+            } catch {
+              Start-Sleep -Seconds 10
+            }
+          }
+          if (-not $success) { throw "Smoke test failed for $url" }
+
   promote-production:
     needs: deploy-staging
     environment: production
@@ -115,3 +133,21 @@ jobs:
             --slot $env:AZURE_SLOT_NAME `
             --target-slot $env:AZURE_TARGET_SLOT_NAME
           if ($LASTEXITCODE -ne 0) { throw 'Azure Web App slot swap failed' }
+
+      - name: Smoke test production
+        shell: pwsh
+        run: |
+          $url = "https://$env:AZURE_WEBAPP_NAME.azurewebsites.net/"
+          $success = $false
+          1..6 | ForEach-Object {
+            try {
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+              if ($response.StatusCode -eq 200) {
+                $success = $true
+                return
+              }
+            } catch {
+              Start-Sleep -Seconds 10
+            }
+          }
+          if (-not $success) { throw "Smoke test failed for $url" }

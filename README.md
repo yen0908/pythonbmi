@@ -37,7 +37,9 @@ Flask route 與計算規則分開管理：
 
 ## 部署到 Azure Web App
 
-`.github/workflows/deploy-azure.yml` 在 `main` 分支的應用程式、測試或 workflow 異動時執行，也可以從 GitHub Actions 手動觸發。流程會在 Windows runner 上執行測試、下載官方 Python 3.14.8 可嵌入版本，將 Python 與相依套件先部署到 `staging` slot。`staging` job 完成後，流程會等待 GitHub `production` environment 的核准；核准後使用 Azure CLI 將 `staging` slot 與 production slot swap。目標 App Service 為 `NTUSTweb00`（資源群組 `NTUSTlab2026`）。站點透過 `web.config` 的 IIS HttpPlatformHandler 啟動 `serve.py`，以 Waitress 提供 Flask 服務。
+`.github/workflows/deploy-azure.yml` 在 `main` 分支的應用程式、測試或 workflow 異動時執行，也可以從 GitHub Actions 手動觸發。流程會在 Windows runner 上執行測試、下載官方 Python 3.14.8 可嵌入版本，將 Python 與相依套件先部署到 `staging` slot，並執行部署後 smoke test。`staging` job 完成後，流程會等待 GitHub `production` environment 的核准；核准後使用 Azure CLI 將 `staging` slot 與 production slot swap，再執行 production smoke test。目標 App Service 為 `NTUSTweb00`（資源群組 `NTUSTlab2026`）。站點透過 `web.config` 的 IIS HttpPlatformHandler 啟動 `serve.py`，以 Waitress 提供 Flask 服務。
+
+`.github/workflows/deploy-azure-test.yml` 在 `dev` push 時執行測試、SonarCloud 掃描、部署到 `test` slot 並執行 smoke test；在 Pull Request 時只執行測試與 SonarCloud 掃描，不會部署 Azure。SonarCloud 使用 `coverage.xml` 評估 Python 新程式碼覆蓋率。
 
 此方法使用**隨部署包提供的 Python**，不依賴 Windows App Service 內建 Python 執行環境；HttpPlatformHandler 必須在目標站點可用。`NTUSTweb00` 目前是 Windows Web App，部署時會確認作業系統。
 
